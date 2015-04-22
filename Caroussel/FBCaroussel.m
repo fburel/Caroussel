@@ -16,7 +16,7 @@
 
 @property (nonatomic) int currentPageIndex;
 
-
+@property (strong, nonatomic) UILabel * noContentLabel;
 @end
 
 
@@ -53,7 +53,15 @@
 // Affiche la 1ere page
 - (void) displayFirstPage
 {
-    [self displayPage:0 animated:NO];
+    if([self.delegate numberOfPageInCaroussel:self] > 0)
+    {
+        [self setNoContentViewVisible:NO];
+        [self displayPage:0 animated:NO];
+    }
+    else
+    {
+        [self setNoContentViewVisible:YES];
+    }
 }
 
 // Affiche la page a la position donnée
@@ -143,4 +151,36 @@
                          oldView.center = CGPointMake(oldView.center.x + offset, oldView.center.y);
                      }];
 }
+
+- (void) setNoContentViewVisible:(BOOL)visible
+{
+    if(visible)
+    {
+        self.backgroundColor = [UIColor whiteColor];
+        [self addSubview:self.noContentLabel];
+    }
+    else
+    {
+        self.backgroundColor = [UIColor blackColor];
+        [self.noContentLabel removeFromSuperview];
+    }
+}
+
+- (UILabel *)noContentLabel
+{
+    if(!_noContentLabel)
+    {
+        _noContentLabel = [[UILabel alloc]initWithFrame:self.bounds];
+        _noContentLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _noContentLabel.text = @"Sorry, nothing to display :'(";
+        _noContentLabel.textColor = [[UIColor lightGrayColor] colorWithAlphaComponent:.8];
+        _noContentLabel.textAlignment = NSTextAlignmentCenter;
+        _noContentLabel.font = [UIFont fontWithName:@"Verdana" size:28];
+        _noContentLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        _noContentLabel.numberOfLines = 0;
+        
+    }
+    return _noContentLabel;
+}
+
 @end
