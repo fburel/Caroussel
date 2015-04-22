@@ -59,6 +59,16 @@
 // Affiche la page a la position donnée
 - (void) displayPage:(int)pageIdx animated:(BOOL)animated
 {
+    
+    NSTimeInterval duration = animated ? .3 : 0.0;
+    
+    float offset = self.bounds.size.width;
+    if (pageIdx - self.currentPageIndex < 0)
+    {
+        offset *= -1;
+    }
+    
+        
     UIView * oldView = [self viewWithTag:PAGE_VIEW_TAG];
     
     UIView * nextPage = [self.delegate carroussel:self pageAtIndex:pageIdx];
@@ -69,9 +79,23 @@
     
     nextPage.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
+    nextPage.center = CGPointMake(nextPage.center.x + offset, nextPage.center.y);
+    
     [self addSubview:nextPage];
     
-    [oldView removeFromSuperview];
+    
+    
+    
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         nextPage.center = CGPointMake(nextPage.center.x - offset, nextPage.center.y);
+                          oldView.center = CGPointMake(oldView.center.x - offset, oldView.center.y);
+
+                     } completion:^(BOOL finished) {
+                         [oldView removeFromSuperview];
+                     }];
+    
+    
     
     self.currentPageIndex = pageIdx;
 }
@@ -87,10 +111,36 @@
     {
         [self displayPage:self.currentPageIndex - 1 animated:YES];
     }
+    else
+    {
+        [self bounce:sender.direction];
+    }
 }
 
 - (int) isDisplayingLastPage
 {
     return self.currentPageIndex == [self.delegate numberOfPageInCaroussel:self] - 1;
+}
+
+- (void) bounce:(UISwipeGestureRecognizerDirection)direction
+{
+    UIView * oldView = [self viewWithTag:PAGE_VIEW_TAG];
+    
+    float offset = self.bounds.size.width / 10.;
+    
+    if (direction == UISwipeGestureRecognizerDirectionRight)
+    {
+        offset *= -1;
+    }
+
+    
+    [UIView animateWithDuration:.1
+                          delay:0
+                        options:UIViewAnimationOptionAutoreverse
+                     animations:^{
+                         oldView.center = CGPointMake(oldView.center.x - offset, oldView.center.y);
+                     } completion:^(BOOL finished) {
+                         oldView.center = CGPointMake(oldView.center.x + offset, oldView.center.y);
+                     }];
 }
 @end
