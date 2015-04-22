@@ -8,6 +8,8 @@
 
 #import "FBCaroussel.h"
 
+#define PAGE_VIEW_TAG       42
+
 @interface FBCaroussel ()
 
 @property (nonatomic) BOOL isConfigured;
@@ -57,14 +59,19 @@
 // Affiche la page a la position donnée
 - (void) displayPage:(int)pageIdx animated:(BOOL)animated
 {
+    UIView * oldView = [self viewWithTag:PAGE_VIEW_TAG];
     
-    UIView * page = [self.delegate carroussel:self pageAtIndex:pageIdx];
+    UIView * nextPage = [self.delegate carroussel:self pageAtIndex:pageIdx];
     
-    page.frame = self.bounds;
+    nextPage.tag = PAGE_VIEW_TAG;
     
-    page.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    nextPage.frame = self.bounds;
     
-    [self addSubview:page];
+    nextPage.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    [self addSubview:nextPage];
+    
+    [oldView removeFromSuperview];
     
     self.currentPageIndex = pageIdx;
 }
