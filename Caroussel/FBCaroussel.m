@@ -72,14 +72,18 @@
 // Reponds au swipe (change de page en fonction de la direction)
 - (void) handleSwipe:(UISwipeGestureRecognizer *)sender
 {
-    if(sender.direction == UISwipeGestureRecognizerDirectionLeft)
+    if(sender.direction == UISwipeGestureRecognizerDirectionLeft && ![self isDisplayingLastPage])
     {
         [self displayPage:self.currentPageIndex + 1 animated:YES];
     }
-    else
+    else if(sender.direction == UISwipeGestureRecognizerDirectionRight && self.currentPageIndex > 0)
     {
         [self displayPage:self.currentPageIndex - 1 animated:YES];
     }
 }
 
+- (int) isDisplayingLastPage
+{
+    return self.currentPageIndex == [self.delegate numberOfPageInCaroussel:self] - 1;
+}
 @end

@@ -15,6 +15,8 @@
 
 - (UIView *) carroussel:(id)sender pageAtIndex:(int)position;
 
+- (int) numberOfPageInCaroussel:(id)sender;
+
 @optional
 
 

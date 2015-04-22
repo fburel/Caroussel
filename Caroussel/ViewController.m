@@ -40,6 +40,10 @@
     return view;
 }
 
+-(int)numberOfPageInCaroussel:(id)sender
+{
+    return 19;
+}
 @end
 
 
